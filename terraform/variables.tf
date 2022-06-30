@@ -3,48 +3,18 @@ variable "compartment_id" {
   type        = string
 }
 
-variable "fingerprint" {
-  description = "The fingerprint of the key to use for signing"
-  type        = string
-}
-
-variable "private_key_path" {
-  description = "The path to the private key to use for signing"
-  type        = string
-}
-
 variable "region" {
   description = "The region to connect to. Default: eu-frankfurt-1"
   type        = string
-  default     = "eu-frankfurt-1"
+  default     = "us-phoenix-1"
 }
 
-variable "tenancy_ocid" {
-  description = "The tenancy OCID."
-  type        = string
-}
-
-variable "user_ocid" {
-  description = "The user OCID."
+variable "ampere_source_image_id" {
+  description = "OCID of the ampere image"
   type        = string
 }
 
 variable "ssh_authorized_keys" {
-  description = "List of authorized SSH keys"
-  type        = string
-}
-
-variable "availability_domain" {
-  description = "Availability domain to provision resources"
-  type        = string
-}
-
-variable "subnet_id" {
-  description = "OCID of the subnet"
-  type        = string
-}
-
-variable "source_image_id" {
-  description = "OCID of the image"
+  description = "Public SSH key added to authorized_keys file of new instances"
   type        = string
 }
