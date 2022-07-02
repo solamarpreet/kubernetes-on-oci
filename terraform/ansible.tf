@@ -5,6 +5,7 @@ resource "local_file" "ansible_inventory" {
       ocarm2_ip = oci_core_instance.ocarm2.public_ip,
       ocarm2_name = oci_core_instance.ocarm2.display_name,
 
+      ansible_ssh_private_key_file = var.ansible_ssh_private_key_file
     }
   )
 

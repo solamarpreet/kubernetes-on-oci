@@ -1,3 +1,7 @@
 [homelab]
 ${ocarm1_name} ansible_host=${ocarm1_ip}
 ${ocarm2_name} ansible_host=${ocarm2_ip}
+
+[homelab:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=${ansible_ssh_private_key_file}

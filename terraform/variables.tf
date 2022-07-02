@@ -18,3 +18,8 @@ variable "ssh_authorized_keys" {
   description = "Public SSH key added to authorized_keys file of new instances"
   type        = string
 }
+
+variable "ansible_ssh_private_key_file" {
+  description = "Private SSH key used to connect to instances via ansible"
+  type        = string
+}
