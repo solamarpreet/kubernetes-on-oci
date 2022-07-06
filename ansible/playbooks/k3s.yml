@@ -1,0 +1,66 @@
+---
+
+- name: Initialising cluster
+  hosts: homelab
+  become: yes
+  tasks:
+    - name: Updating instances
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Rebooting instances
+      reboot:
+
+    - name: Correcting OCI IPTABLES
+      command: iptables -I INPUT -j ACCEPT
+
+    - name: Saving IPTABLES rules
+      command: netfilter-persistent save
+
+    - name: Downloading k3s script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s.sh
+        mode: "0555"
+
+- name: Configuring Master node
+  hosts: ocarm1
+  become: yes
+  tasks:
+    - name: Installing k3s
+      shell: /tmp/k3s.sh
+
+    - name: Waiting for k3s node token file
+      ansible.builtin.wait_for:
+        path: /var/lib/rancher/k3s/server/node-token
+
+    - name: Copying k3s node token
+      ansible.builtin.command: cat /var/lib/rancher/k3s/server/node-token
+      register: nodetoken
+
+    - name: Store node-token
+      set_fact:
+        token: "{{ nodetoken.stdout }}"
+
+- name: Configuring Worker node
+  hosts: ocarm2
+  become: yes
+  environment: 
+    K3S_URL: https://{{ hostvars['ocarm1']['ansible_default_ipv4']['address'] }}:6443
+    K3S_TOKEN: "{{ hostvars['ocarm1']['token'] }}"
+
+  tasks:
+    - name: Installing k3s
+      shell: /tmp/k3s.sh
+
+- name: Finishing
+  hosts: ocarm1
+  become: yes
+  tasks:
+    - name: Sleep for 10 seconds
+      ansible.builtin.wait_for:
+        timeout: 10
+
+    - name: Adding role to worker node
+      command: kubectl label node ocarm2 kubernetes.io/role=worker
