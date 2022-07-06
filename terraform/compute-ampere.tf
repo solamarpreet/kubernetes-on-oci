@@ -11,7 +11,8 @@ resource "oci_core_instance" "ocarm1" {
     }
 
     metadata = {
-    ssh_authorized_keys = var.ssh_authorized_keys
+    ssh_authorized_keys = var.ssh_authorized_keys,
+    user_data = filebase64("${path.module}/scripts/init.sh")
     }
 
     create_vnic_details {
@@ -42,7 +43,8 @@ resource "oci_core_instance" "ocarm2" {
     }
 
     metadata = {
-    ssh_authorized_keys = var.ssh_authorized_keys
+    ssh_authorized_keys = var.ssh_authorized_keys,
+    user_data = filebase64("${path.module}/scripts/init.sh")
     }
 
     create_vnic_details {

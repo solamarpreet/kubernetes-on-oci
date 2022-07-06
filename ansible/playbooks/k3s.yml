@@ -12,12 +12,6 @@
     - name: Rebooting instances
       reboot:
 
-    - name: Correcting OCI IPTABLES
-      command: iptables -I INPUT -j ACCEPT
-
-    - name: Saving IPTABLES rules
-      command: netfilter-persistent save
-
     - name: Downloading k3s script
       get_url:
         url: https://get.k3s.io
