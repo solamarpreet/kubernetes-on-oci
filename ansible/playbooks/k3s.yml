@@ -7,7 +7,7 @@
     - name: Updating instances
       apt:
         update_cache: yes
-        upgrade: yes
+        upgrade: dist
 
     - name: Rebooting instances
       reboot:
@@ -58,3 +58,12 @@
 
     - name: Adding role to worker node
       command: kubectl label node ocarm2 kubernetes.io/role=worker
+
+    - name: Fetching kube config file for local kubectl access
+      fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: ./kube.config
+        flat: yes
+
+    - name: Final reboot
+      reboot:
