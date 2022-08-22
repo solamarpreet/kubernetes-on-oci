@@ -62,7 +62,7 @@
     - name: Fetching kube config file for local kubectl access
       fetch:
         src: /etc/rancher/k3s/k3s.yaml
-        dest: ./kube.config
+        dest: ../kube.config
         flat: yes
 
     - name: Final reboot
