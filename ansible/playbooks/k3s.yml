@@ -48,7 +48,7 @@
     - name: Installing k3s
       shell: /tmp/k3s.sh
 
-- name: Finishing
+- name: Finalising
   hosts: ocarm1
   become: yes
   tasks:
@@ -65,5 +65,10 @@
         dest: ../kube.config
         flat: yes
 
-    - name: Final reboot
+- name: Rebooting
+  hosts: homelab
+  become: yes
+  tasks:
+    - name: Rebooting instances
       reboot:
+
