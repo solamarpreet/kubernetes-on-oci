@@ -63,6 +63,16 @@ resource "oci_core_default_security_list" "default_list" {
   source      = "0.0.0.0/0"
   }
 
+  ingress_security_rules {
+  protocol    = "6"
+  description = "Allow k8s NodePort traffic"
+  tcp_options {
+    min = 30000
+    max = 32767
+  }
+  source      = "0.0.0.0/0"
+  }
+
 }
 
 resource "oci_core_internet_gateway" "internet_gateway" {
