@@ -65,6 +65,11 @@
         dest: ../kube.config
         flat: yes
 
+    - name: Linking Control Plane IP to DuckDNS
+      uri:
+        url: "{{ duckdns_url }}"
+
+
 - name: Rebooting
   hosts: homelab
   become: yes

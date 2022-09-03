@@ -6,6 +6,7 @@ resource "local_file" "ansible_inventory" {
       ocarm2_name = oci_core_instance.ocarm2.display_name,
 
       ansible_ssh_private_key_file = var.ansible_ssh_private_key_file
+      duckdns_url = var.duckdns_url
     }
   )
 

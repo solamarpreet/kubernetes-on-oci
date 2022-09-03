@@ -1,8 +1,3 @@
-variable "compartment_id" {
-  description = "OCI Compartment ID"
-  type        = string
-}
-
 variable "region" {
   description = "The region to connect to. Default: eu-frankfurt-1"
   type        = string
@@ -22,4 +17,17 @@ variable "ssh_authorized_keys" {
 variable "ansible_ssh_private_key_file" {
   description = "Private SSH key used to connect to instances via ansible"
   type        = string
+}
+
+variable "compartment_id" {
+  description = "OCI Compartment ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "duckdns_url" {
+  description = "DuckDNS url to configure DDNS hostname for k8s control plane"
+  default     = "http://example.com"
+  type        = string
+  sensitive   = true
 }
