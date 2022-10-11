@@ -1,7 +1,7 @@
 ---
 
 - name: Initialising cluster
-  hosts: homelab
+  hosts: nodes
   become: yes
   tasks:
     - name: Updating instances
@@ -67,13 +67,12 @@
 
     - name: Linking Control Plane IP to DuckDNS
       uri:
-        url: "{{ duckdns_url }}"
+        url: "{{ kube_duckdns_url }}"
 
 
 - name: Rebooting
-  hosts: homelab
+  hosts: nodes
   become: yes
   tasks:
     - name: Rebooting instances
       reboot:
-

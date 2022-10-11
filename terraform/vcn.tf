@@ -55,10 +55,20 @@ resource "oci_core_default_security_list" "default_list" {
 
   ingress_security_rules {
   protocol    = "6"
-  description = "Allow k8s api traffic"
+  description = "Allow k3s api traffic"
   tcp_options {
     min = 6443
     max = 6443
+  }
+  source      = "0.0.0.0/0"
+  }
+
+  ingress_security_rules {
+  protocol    = "6"
+  description = "Allow microk8s api traffic"
+  tcp_options {
+    min = 16443
+    max = 16443
   }
   source      = "0.0.0.0/0"
   }

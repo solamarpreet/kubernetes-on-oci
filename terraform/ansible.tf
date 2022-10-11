@@ -1,12 +1,18 @@
 resource "local_file" "ansible_inventory" {
   content = templatefile("${path.module}/templates/inventory.tftpl",
     { ocarm1_ip = oci_core_instance.ocarm1.public_ip,
-      ocarm1_name = oci_core_instance.ocarm1.display_name,
+      ocarm1_private_ip = oci_core_instance.ocarm1.private_ip,
+      ocarm1_name = oci_core_instance.ocarm1.display_name,      
       ocarm2_ip = oci_core_instance.ocarm2.public_ip,
+      ocarm2_private_ip = oci_core_instance.ocarm2.private_ip,
       ocarm2_name = oci_core_instance.ocarm2.display_name,
+      ocamd1_ip = oci_core_instance.ocamd1.public_ip,
+      ocamd1_private_ip = oci_core_instance.ocamd1.private_ip,
+      ocamd1_name = oci_core_instance.ocamd1.display_name,
 
       ansible_ssh_private_key_file = var.ansible_ssh_private_key_file
-      duckdns_url = var.duckdns_url
+      kube_duckdns_url = var.kube_duckdns_url
+      registry_duckdns_url = var.registry_duckdns_url
     }
   )
 

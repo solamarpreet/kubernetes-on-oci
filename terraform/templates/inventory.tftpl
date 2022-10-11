@@ -1,8 +1,16 @@
-[homelab]
-${ocarm1_name} ansible_host=${ocarm1_ip}
-${ocarm2_name} ansible_host=${ocarm2_ip}
+[nodes]
+${ocarm1_name} ansible_host=${ocarm1_ip} private_ip=${ocarm1_private_ip}
+${ocarm2_name} ansible_host=${ocarm2_ip} private_ip=${ocarm2_private_ip}
 
-[homelab:vars]
+[registry]
+${ocamd1_name} ansible_host=${ocamd1_ip} private_ip=${ocamd1_private_ip}
+
+[kubernetes:children]
+nodes
+registry
+
+[kubernetes:vars]
 ansible_user=ubuntu
 ansible_ssh_private_key_file=${ansible_ssh_private_key_file}
-duckdns_url=${duckdns_url}
+kube_duckdns_url=${kube_duckdns_url}
+registry_duckdns_url=${registry_duckdns_url}

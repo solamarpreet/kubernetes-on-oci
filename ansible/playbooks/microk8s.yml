@@ -1,0 +1,90 @@
+---
+
+- name: Initialising cluster
+  hosts: nodes
+  become: yes
+  tasks:
+    - name: Updating instances
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Rebooting instances
+      reboot:
+
+    - name: Updating snaps
+      shell: snap refresh
+
+    - name: Rebooting instances
+      reboot:
+
+    - name: Installing microk8s
+      command: snap install microk8s --classic --channel=latest/stable
+
+    - name: Waiting for microk8s to start
+      command: microk8s status --wait-ready
+
+
+- name: Configuring Master node
+  hosts: ocarm1
+  become: yes
+  tasks:
+    - name: Enable ingress addon
+      command: microk8s enable ingress
+
+    - name: Add DNS record
+      shell: "echo {{ hostvars['ocarm2']['private_ip'] }} ocarm2 | tee -a /etc/hosts"
+
+    - name: Copying worker node token
+      shell: microk8s add-node --format=short | grep -m 1 "microk8s.*"
+      register: nodetoken
+
+    - name: Store worker node token
+      set_fact:
+        token: "{{ nodetoken.stdout }}"
+
+
+- name: Configuring Worker node
+  hosts: ocarm2
+  become: yes
+  tasks:
+    - name: Add DNS record
+      shell: "echo {{ hostvars['ocarm1']['private_ip'] }} ocarm1 | tee -a /etc/hosts"
+
+    - name: Joining cluster
+      command: "{{ hostvars['ocarm1']['token'] }} --worker"
+
+
+- name: Finalising
+  hosts: ocarm1
+  become: yes
+  tasks:
+    - name: Sleep for 10 seconds
+      ansible.builtin.wait_for:
+        timeout: 10
+
+    - name: Adding role to master node
+      command: microk8s kubectl label node ocarm1 kubernetes.io/role=master
+
+    - name: Adding role to worker node
+      command: microk8s kubectl label node ocarm2 kubernetes.io/role=worker
+
+    - name: Generating kube config file
+      shell: microk8s config > /tmp/kubeconfig
+
+    - name: Fetching kube config file for local kubectl access
+      fetch:
+        src: /tmp/kubeconfig
+        dest: ../kubeconfig
+        flat: yes
+
+    - name: Linking Control Plane IP to DuckDNS
+      uri:
+        url: "{{ kube_duckdns_url }}"
+
+- name: Rebooting
+  hosts: nodes
+  become: yes
+  tasks:
+    - name: Rebooting instances
+      reboot:
