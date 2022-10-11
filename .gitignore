@@ -30,4 +30,4 @@ override.tf.json
 *tfplan*
 
 ansible/hosts
-kube.config
+kubeconfig
