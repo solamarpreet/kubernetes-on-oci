@@ -99,14 +99,15 @@
       until: result.rc == 0
       when: ip_included.stdout_lines[0]|int == 0
 
-    - name: Enable ingress addon
-      command: microk8s enable ingress
-
     - name: Add DNS record to hosts file
       lineinfile:
         dest: /etc/hosts
         line: "{{ hostvars['ocarm2']['private_ip'] }} ocarm2"
         state: present
+        
+    - name: Enable ingress addon
+      command: microk8s enable ingress
+
 
     - name: Copying worker node token
       shell: microk8s add-node --format=short | grep -m 1 "microk8s.*"

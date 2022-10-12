@@ -21,6 +21,9 @@
 - name: Configuring Master node
   hosts: ocarm1
   become: yes
+  environment: 
+    INSTALL_K3S_EXEC: "server --tls-san {{ ansible_host }}"
+
   tasks:
     - name: Installing k3s
       shell: /tmp/k3s.sh
@@ -59,11 +62,21 @@
     - name: Adding role to worker node
       command: kubectl label node ocarm2 kubernetes.io/role=worker
 
-    - name: Fetching kube config file for local kubectl access
+    - name: Write kube config to tmp file
+      shell: "cp /etc/rancher/k3s/k3s.yaml /tmp/conf-with-external-ip; chmod 600 /tmp/conf-with-external-ip"
+
+    - name: Replace IP in config file
+      replace:
+        path: "/tmp/conf-with-external-ip"
+        regexp: 'server: https://[0-9\\.]+:6443'
+        replace: "server: https://{{ ansible_host }}:6443"
+
+    - name: Download kubeconf
       fetch:
-        src: /etc/rancher/k3s/k3s.yaml
-        dest: ../kube.config
+        src: /tmp/conf-with-external-ip
+        dest: ../kubeconfig
         flat: yes
+        fail_on_missing: yes
 
     - name: Linking Control Plane IP to DuckDNS
       uri:
