@@ -5,4 +5,3 @@ amd_source_image_id = "ocid1.image.oc1.ap-hyderabad-1.aaaaaaaaammbtmhmaozuu7gqql
 ampere_boot_volume_size = 70
 amd_boot_volume_size = 50
 ansible_ssh_private_key_file = "/home/sol/.ssh/root@oracle"
-config_file_profile = "INDIA"
