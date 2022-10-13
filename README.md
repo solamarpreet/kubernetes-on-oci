@@ -52,9 +52,9 @@
 
 
 The following must already be present on your system
-* Terraform
-* Ansible
-* Kubectl
+* [Terraform CLI](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+* [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
+* [Kubectl](https://kubernetes.io/docs/tasks/tools/)
 * [OCI config file](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm)
 <br />
 
@@ -85,18 +85,19 @@ The following must already be present on your system
    ```sh
    terraform apply --var-file=secret.tfvars
    ```
-6. Install Microk8s or K3s on the created infrastructure depending on your preference
+6. Install either Microk8s or K3s on the created infrastructure depending on your preference
    ```sh
    cd ../ansible
    ```
    ```sh
+   # Recommended
    ansible-playbook playbooks/microk8s.yml
    ```
    or
    ```sh
    ansible-playbook playbooks/k3s.yml
    ```
-7. Copy the kube config file to ~/.kube/config
+7. Copy the kubeconfig file to ~/.kube/config
    ```sh
    mkdir ~/.kube && cp kubeconfig ~/.kube/config
    ```
