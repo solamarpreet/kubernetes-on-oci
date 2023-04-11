@@ -1,15 +1,15 @@
 resource "oci_core_vcn" "homelab_vcn" {
   compartment_id = var.compartment_id
 
-  cidr_blocks    = ["10.0.0.0/24"]
-  display_name   = "homelab_vcn"
-  dns_label      = "hlvcn"
+  cidr_blocks  = ["10.0.0.0/24"]
+  display_name = "homelab_vcn"
+  dns_label    = "hlvcn"
 }
 
 resource "oci_core_default_security_list" "default_list" {
   manage_default_resource_id = oci_core_vcn.homelab_vcn.default_security_list_id
 
-  display_name  = "Outbound and Inbound (default)"
+  display_name = "Outbound and Inbound (default)"
 
   egress_security_rules {
     protocol    = "all" // TCP
@@ -24,63 +24,63 @@ resource "oci_core_default_security_list" "default_list" {
   }
 
   ingress_security_rules {
-  protocol    = "6"
-  description = "Allow ssh traffic"
-  tcp_options {
-    min = 22
-    max = 22
-  }
-  source      = "0.0.0.0/0"
-  }
-
-  ingress_security_rules {
-  protocol    = "6"
-  description = "Allow http traffic"
-  tcp_options {
-    min = 80
-    max = 80
-  }
-  source      = "0.0.0.0/0"
+    protocol    = "6"
+    description = "Allow ssh traffic"
+    tcp_options {
+      min = 22
+      max = 22
+    }
+    source = "0.0.0.0/0"
   }
 
   ingress_security_rules {
-  protocol    = "6"
-  description = "Allow https traffic"
-  tcp_options {
-    min = 443
-    max = 443
-  }
-  source      = "0.0.0.0/0"
-  }
-
-  ingress_security_rules {
-  protocol    = "6"
-  description = "Allow k3s api traffic"
-  tcp_options {
-    min = 6443
-    max = 6443
-  }
-  source      = "0.0.0.0/0"
+    protocol    = "6"
+    description = "Allow http traffic"
+    tcp_options {
+      min = 80
+      max = 80
+    }
+    source = "0.0.0.0/0"
   }
 
   ingress_security_rules {
-  protocol    = "6"
-  description = "Allow microk8s api traffic"
-  tcp_options {
-    min = 16443
-    max = 16443
-  }
-  source      = "0.0.0.0/0"
+    protocol    = "6"
+    description = "Allow https traffic"
+    tcp_options {
+      min = 443
+      max = 443
+    }
+    source = "0.0.0.0/0"
   }
 
   ingress_security_rules {
-  protocol    = "6"
-  description = "Allow k8s NodePort traffic"
-  tcp_options {
-    min = 30000
-    max = 32767
+    protocol    = "6"
+    description = "Allow k3s api traffic"
+    tcp_options {
+      min = 6443
+      max = 6443
+    }
+    source = "0.0.0.0/0"
   }
-  source      = "0.0.0.0/0"
+
+  ingress_security_rules {
+    protocol    = "6"
+    description = "Allow microk8s api traffic"
+    tcp_options {
+      min = 16443
+      max = 16443
+    }
+    source = "0.0.0.0/0"
+  }
+
+  ingress_security_rules {
+    protocol    = "6"
+    description = "Allow k8s NodePort traffic"
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+    source = "0.0.0.0/0"
   }
 
 }

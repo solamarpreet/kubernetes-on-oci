@@ -2,7 +2,7 @@
 
 - name: Initialising cluster
   hosts: nodes
-  become: yes
+  become: true
   tasks:
     - name: Updating instances
       apt:
@@ -44,7 +44,7 @@
 
 - name: Configuring Master node
   hosts: ocarm1
-  become: yes
+  become: true
   tasks:
 
     - name: Check IP is already included in the template
@@ -120,7 +120,7 @@
 
 - name: Configuring Worker node
   hosts: ocarm2
-  become: yes
+  become: true
   tasks:
     - name: Add DNS record to hosts file
       lineinfile:
@@ -134,7 +134,7 @@
 
 - name: Finalising
   hosts: ocarm1
-  become: yes
+  become: true
   tasks:
     - name: Sleep for 10 seconds
       ansible.builtin.wait_for:
@@ -168,7 +168,7 @@
 
 - name: Rebooting
   hosts: nodes
-  become: yes
+  become: true
   tasks:
     - name: Rebooting instances
       reboot:
