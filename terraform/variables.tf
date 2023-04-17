@@ -1,31 +1,10 @@
-variable "region" {
-  description = "The region to connect to. Default: eu-frankfurt-1"
-  type        = string
-  default     = "us-phoenix-1"
-}
-
 variable "config_file_profile" {
   description = "The config profile to use"
   type        = string
   default     = "DEFAULT"
 }
 
-variable "ampere_source_image_id" {
-  description = "OCID of the ampere image"
-  type        = string
-}
-
-variable "amd_source_image_id" {
-  description = "OCID of the amd image"
-  type        = string
-}
-
 variable "ampere_boot_volume_size" {
-  description = "Size of the boot volume in GBs"
-  type        = number
-}
-
-variable "amd_boot_volume_size" {
   description = "Size of the boot volume in GBs"
   type        = number
 }
@@ -46,14 +25,13 @@ variable "compartment_id" {
   sensitive   = true
 }
 
-variable "kube_duckdns_url" {
-  description = "DuckDNS url to configure DDNS hostname for k8s control plane"
-  default     = "http://example.com"
-  type        = string
-  sensitive   = true
+variable "availability_domain" {
+  description = "Availability Domain to launch the compute instances in. Mostly 0, 1 or 2"
+  type        = number
+  default     = 0
 }
 
-variable "registry_duckdns_url" {
+variable "kube_duckdns_url" {
   description = "DuckDNS url to configure DDNS hostname for k8s control plane"
   default     = "http://example.com"
   type        = string
