@@ -58,6 +58,9 @@ The following must already be present on your system
 * [OCI config file](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm)
 <br />
 
+### IMPORTANT NOTICE
+
+Oracle has started restricting free tier accounts from launching new instances in most Regions. If you get a Resouce Capacity error the only solution so far is to upgrade your account to Pay As You Go. You should then be able to launch the resources. As long as you use the Always Free resources you still wont be charged even though your account is now upgraded.
 
 
 ## Usage
@@ -69,22 +72,30 @@ The following must already be present on your system
    ```sh
    cd kubernetes-on-oci/terraform
    ```
-2. Change the values in `terraform.tfvars` as per your account & region
+
+2. Change the values in `terraform.tfvars` as per your needs
    ```sh
    nano terraform.tfvars
    ```
+
 3. Rename `secret.tfvars.example` to `secret.tfvars` and populate it with values
    ```sh
    mv secret.tfvars.example secret.tfvars
    ```
+   ```sh
+   nano secret.tfvars
+   ```
+
 4. Initialize terraform
    ```sh
    terraform init
    ```
+
 5. Apply terraform configuration
    ```sh
    terraform apply --var-file=secret.tfvars
    ```
+
 6. Install either Microk8s or K3s on the created infrastructure depending on your preference
    ```sh
    cd ../ansible
@@ -97,10 +108,12 @@ The following must already be present on your system
    ```sh
    ansible-playbook playbooks/k3s.yml
    ```
+
 7. Copy the kubeconfig file to ~/.kube/config
    ```sh
-   mkdir ~/.kube && cp kubeconfig ~/.kube/config
+   mkdir -p ~/.kube && cp kubeconfig ~/.kube/config
    ```
+
 8. Start using kubectl commands
    ```sh
    kubectl get nodes
