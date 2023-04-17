@@ -34,7 +34,7 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#prerequisites">Installation</a></li>
+    <li><a href="#getting started">Getting Started</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#troubleshooting">Troubleshooting</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -44,6 +44,12 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
+<br />
+
+
+## IMPORTANT NOTICE
+
+Oracle has started restricting Free Tier accounts from launching new instances in most Regions. If you get a Resouce Capacity error the only solution so far is to upgrade your account to Pay As You Go. You should then be able to launch the resources. As long as you use the Always Free resources you still won't be charged even though your account is now upgraded.
 <br />
 
 
@@ -58,9 +64,6 @@ The following must already be present on your system
 * [OCI config file](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/sdkconfig.htm)
 <br />
 
-### IMPORTANT NOTICE
-
-Oracle has started restricting free tier accounts from launching new instances in most Regions. If you get a Resouce Capacity error the only solution so far is to upgrade your account to Pay As You Go. You should then be able to launch the resources. As long as you use the Always Free resources you still wont be charged even though your account is now upgraded.
 
 
 ## Usage
@@ -155,7 +158,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Amarpreet Singh - solamarpreet@protonmail.com
+Amarpreet Singh - solamarpreet@gmail.com
 
 Blog & Portfolio : [https://solamarpreet.github.io](https://solamarpreet.github.io)
 
