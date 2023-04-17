@@ -51,7 +51,7 @@
 
 Oracle has started restricting Free Tier accounts from launching new instances in most Regions. If you get a Resouce Capacity error the only solution so far is to upgrade your account to Pay As You Go. You should then be able to launch the resources. As long as you use the Always Free resources you still won't be charged even though your account is now upgraded.
 <br />
-
+<br />
 
 
 <!-- GETTING STARTED -->
