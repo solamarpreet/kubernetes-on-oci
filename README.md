@@ -90,17 +90,30 @@ The following must already be present on your system
    nano secret.tfvars
    ```
 
-4. Initialize terraform
+4. Configure Remote Backend by adding your Terraform Cloud Backend details in the backend.tf file
+   ```sh
+   nano backend.tf
+   ```
+   ```sh
+   terraform login
+   ```
+   
+   or delete the backend.tf file if Remote Backend is not needed
+   ```sh
+   rm backend.tf
+   ```
+
+5. Initialize terraform
    ```sh
    terraform init
    ```
 
-5. Apply terraform configuration
+6. Apply terraform configuration
    ```sh
    terraform apply --var-file=secret.tfvars
    ```
 
-6. Install either Microk8s or K3s on the created infrastructure depending on your preference
+7. Install either Microk8s or K3s on the created infrastructure depending on your preference
    ```sh
    cd ../ansible
    ```
@@ -113,12 +126,12 @@ The following must already be present on your system
    ansible-playbook playbooks/k3s.yml
    ```
 
-7. Copy the kubeconfig file to ~/.kube/config
+8. Copy the kubeconfig file to ~/.kube/config
    ```sh
    mkdir -p ~/.kube && cp kubeconfig ~/.kube/config
    ```
 
-8. Start using kubectl commands
+9. Start using kubectl commands
    ```sh
    kubectl get nodes
    ```
