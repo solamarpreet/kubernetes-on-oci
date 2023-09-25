@@ -1,0 +1,184 @@
+---
+
+- name: Initialising
+  hosts: nodes
+  become: true
+  tasks:
+    - name: Updating instances
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Rebooting instances
+      reboot:
+
+    - name: Updating snaps
+      command: snap refresh
+      retries: 3
+      delay: 5
+      register: result
+      until: result is not failed 
+
+    - name: Rebooting instances
+      reboot:
+
+- name: Install Docker Engine
+  hosts: nodes
+  become: true
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        pkg:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+        - docker-buildx-plugin
+        - docker-compose-plugin
+        state: latest
+        update_cache: true
+
+    - name: Linking Control Plane IP to DuckDNS
+      uri:
+        url: "{{ duckdns_url }}"
+
+    - name: Ensure group docker exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+
+    - name: Add the user ubuntu appending the group 'docker' and to the user's groups
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes       
+
+- name: Installing microk8s
+  hosts: nodes
+  become: true
+  tasks:
+    - name: Installing microk8s
+      command: snap install microk8s --classic --channel=latest/stable
+
+    - name: Wait for microk8s to be ready
+      shell: "microk8s status --wait-ready"
+      changed_when: False
+
+    - name: Add user 'ubuntu' to group microk8s
+      user:
+        name: "ubuntu"
+        groups: ["microk8s"]
+        append: True
+
+    - name: Set File Descriptor Limits for Microk8s
+      lineinfile:
+        dest: /var/snap/microk8s/current/args/containerd-env
+        line: "ulimit -n 65536"
+        state: present
+
+
+- name: Configuring Master node
+  hosts: ocarm1
+  become: true
+  tasks:
+
+    - name: Check IP is already included in the template
+      shell: "cat /var/snap/microk8s/current/certs/csr.conf.template | grep '= {{ansible_host}}' | wc -l"
+      register: ip_included
+      changed_when: False
+
+    - name: Get highest entry in the list of IPs (conf)
+      shell: "cat /var/snap/microk8s/current/certs/csr.conf | sed -nr 's/IP\\.([0-9]+).*/\\1/p' | sort | tail -n 1"
+      register: csr_output
+      when: ip_included.stdout_lines[0]|int == 0
+
+    - name: Get highest entry in the list of IPs (template)
+      shell: "cat /var/snap/microk8s/current/certs/csr.conf.template | sed -nr 's/IP\\.([0-9]+).*/\\1/p' | sort | tail -n 1"
+      register: csr_template_output
+      when: ip_included.stdout_lines[0]|int == 0
+
+    - name: Add IP entry
+      lineinfile:
+        path: /var/snap/microk8s/current/certs/csr.conf.template
+        insertafter: "^IP.{{csr_template_output.stdout_lines[0]}} = .*"
+        line: "IP.{{csr_output.stdout_lines[0]|int + 1}} = {{ansible_host}}"
+      register: csr_mod_result
+      when: ip_included.stdout_lines[0]|int == 0
+
+    - name: Restart microk8s (stop)
+      shell: "microk8s stop"
+      when: ip_included.stdout_lines[0]|int == 0
+      retries: 5
+      delay: 10
+      register: result
+      until: result.rc == 0
+
+    - name: Sleep for 10 seconds
+      ansible.builtin.wait_for:
+        timeout: 10
+
+    - name: Restart microk8s (start)
+      shell: "microk8s start"
+      when: ip_included.stdout_lines[0]|int == 0
+      retries: 5
+      delay: 10
+      register: result
+      until: result.rc == 0
+
+    - name: Wait for microk8s to be ready after updating the CSR
+      shell: "microk8s status --wait-ready"
+      changed_when: False
+      retries: 5
+      delay: 10
+      register: result
+      until: result.rc == 0
+      when: ip_included.stdout_lines[0]|int == 0
+
+    - name: Sleep for 10 seconds
+      ansible.builtin.wait_for:
+        timeout: 10
+
+    - name: Adding role
+      command: microk8s kubectl label node ocarm1 kubernetes.io/role=master
+
+    - name: Write config to file
+      shell: "microk8s.config > /tmp/conf-with-external-ip; chmod 600 /tmp/conf-with-external-ip"
+
+    - name: Replace IP in config file
+      replace:
+        path: "/tmp/conf-with-external-ip"
+        regexp: 'server: https://[0-9\\.]+:16443'
+        replace: "server: https://{{ ansible_host }}:16443"
+
+    - name: Download kubeconf
+      fetch:
+        src: /tmp/conf-with-external-ip
+        dest: ../kubeconfig
+        flat: yes
+        fail_on_missing: yes
+
+    - name: Rebooting instances
+      reboot:

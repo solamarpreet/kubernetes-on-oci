@@ -31,8 +31,8 @@ variable "availability_domain" {
   default     = 0
 }
 
-variable "kube_duckdns_url" {
-  description = "DuckDNS url to configure DDNS hostname for k8s control plane"
+variable "duckdns_url" {
+  description = "DuckDNS url to configure DDNS hostname for instance"
   default     = "http://example.com"
   type        = string
   sensitive   = true
