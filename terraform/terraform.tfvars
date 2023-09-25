@@ -5,7 +5,7 @@ config_file_profile = "DEFAULT"
 ampere_boot_volume_size = 100
 
 # If you want to use a different AZ to launch instances in you can specify it here. The AZs are automatically sourced into a data resource. All you need to do in input the index. You want the value to be 0, 1 or 2. 
-availability_domain = 0
+availability_domain = 1
 
 # The Public Key you want to add to the ~/.ssh/authorized_keys of the nodes
 ssh_authorized_keys = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINdAjFIVuEXPP+mUqyKcLV/eA7A9jjGvkKA8ZFp2xNXz sol@sol-PC"

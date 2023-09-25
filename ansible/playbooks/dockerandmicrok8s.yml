@@ -22,43 +22,39 @@
     - name: Rebooting instances
       reboot:
 
-- name: Install Docker Engine
+- name: Install Docker Engine and other software
   hosts: nodes
   become: true
   tasks:
     - name: Install required system packages
       apt:
         pkg:
-          - apt-transport-https
+          - tmux
+          - vim
+          - whois
+          - nmap
+          - net-tools
           - ca-certificates
           - curl
-          - software-properties-common
+          - build-essential
+          - procps
+          - file
+          - git
+          - python3-dev
           - python3-pip
-          - virtualenv
+          - python3-venv
           - python3-setuptools
         state: latest
         update_cache: true
 
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
+    - name: Downloading Docker convenience script
+      get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: "0555"
 
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu jammy stable
-        state: present
-
-    - name: Update apt and install docker-ce
-      apt:
-        pkg:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-        - docker-buildx-plugin
-        - docker-compose-plugin
-        state: latest
-        update_cache: true
+    - name: Installing Docker
+      shell: /tmp/get-docker.sh
 
     - name: Linking Control Plane IP to DuckDNS
       uri:
@@ -136,9 +132,9 @@
       register: result
       until: result.rc == 0
 
-    - name: Sleep for 10 seconds
+    - name: Sleep for 20 seconds
       ansible.builtin.wait_for:
-        timeout: 10
+        timeout: 20
 
     - name: Restart microk8s (start)
       shell: "microk8s start"
