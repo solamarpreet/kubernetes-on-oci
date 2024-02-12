@@ -29,6 +29,7 @@
     - name: Install required system packages
       apt:
         pkg:
+          - pipx
           - tmux
           - vim
           - whois
@@ -64,7 +65,6 @@
       ansible.builtin.group:
         name: docker
         state: present
-
 
     - name: Add the user ubuntu appending the group 'docker' and to the user's groups
       ansible.builtin.user:
